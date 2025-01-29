@@ -102,57 +102,42 @@ def post_tweet():
         return
 
     try:
+        print("Navigating to Twitter home...")
         driver.get("https://twitter.com/home")
         time.sleep(5)
 
+        print("Finding tweet box...")
         tweet_box = driver.find_element(By.XPATH, '//div[@data-testid="tweetTextarea_0"]')
         tweet_box.send_keys(tweet_content)
         time.sleep(2)
 
+        print("Clicking the tweet button...")
         tweet_button = driver.find_element(By.XPATH, '//div[@data-testid="tweetButtonInline"]')
         tweet_button.click()
-        print(f"Tweet posted: {tweet_content}")
+        print(f"Tweet posted successfully: {tweet_content}")
         time.sleep(3)
     except Exception as e:
         print(f"Error posting tweet: {e}")
 
-# Fonction pour répondre à toutes les mentions
-def reply_to_all_mentions():
-    print("Replying to mentions...")
-    try:
-        driver.get("https://twitter.com/notifications/mentions")
-        time.sleep(5)
-
-        mentions = driver.find_elements(By.XPATH, '//article[@data-testid="tweet"]')
-        for mention in mentions:
-            try:
-                reply_button = mention.find_element(By.XPATH, './/div[@data-testid="reply"]')
-                reply_button.click()
-                time.sleep(2)
-
-                reply_box = driver.find_element(By.XPATH, '//div[@data-testid="tweetTextarea_0"]')
-                reply_content = generate_tweet_with_hashtags()
-                reply_box.send_keys(reply_content)
-                driver.find_element(By.XPATH, '//div[@data-testid="tweetButton"]').click()
-                print(f"Replied to mention with: {reply_content}")
-                time.sleep(3)
-            except Exception as e:
-                print(f"Error replying to a mention: {e}")
-    except Exception as e:
-        print(f"Error accessing mentions: {e}")
-
 # Fonction principale
 def run_bot():
-    print("Starting bot...")
+    print("Starting bot execution...")
+
+    # Connexion à Twitter
     login_to_twitter()
 
+    # Publier immédiatement un premier tweet
+    print("Posting initial tweet...")
+    post_tweet()
+
+    # Entrer dans une boucle pour publier régulièrement des tweets
     while True:
+        print("Running tweet cycle...")
         post_tweet()
-        reply_to_all_mentions()
 
         # Attendre entre 90 et 120 minutes avant la prochaine exécution
         wait_time = random.randint(5400, 7200)
-        print(f"Waiting {wait_time / 60:.2f} minutes before next execution...")
+        print(f"Waiting {wait_time / 60:.2f} minutes before next tweet...")
         time.sleep(wait_time)
 
 # Exécuter le bot
