@@ -5,29 +5,25 @@ import openai
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.chrome.service import Service
 
 # Charger les variables d'environnement
 TWITTER_USERNAME = os.getenv("TWITTER_USERNAME")
 TWITTER_PASSWORD = os.getenv("TWITTER_PASSWORD")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-CHROMEDRIVER_PATH = os.getenv('CHROMEDRIVER_PATH', '/app/.chromedriver/bin/chromedriver')
-GOOGLE_CHROME_BIN = os.getenv('GOOGLE_CHROME_SHIM', '/app/.apt/usr/bin/google-chrome')
 
 # Configurer l'API OpenAI
 openai.api_key = OPENAI_API_KEY
 
 # Configurer Selenium
 options = webdriver.ChromeOptions()
-options.binary_location = GOOGLE_CHROME_BIN
-options.add_argument("--headless")
+options.add_argument("--headless")  # Exécution sans interface graphique
 options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
 options.add_argument("--disable-gpu")
 options.add_argument("--remote-debugging-port=9222")
 
-# Initialiser le driver avec les chemins fournis par Heroku
-driver = webdriver.Chrome(service=Service(CHROMEDRIVER_PATH), options=options)
+# Initialiser le driver sans chemins explicites
+driver = webdriver.Chrome(options=options)
 
 # Fonction pour générer un tweet avec hashtags
 def generate_tweet_with_hashtags():
@@ -123,3 +119,4 @@ try:
     run_bot()
 finally:
     driver.quit()
+
