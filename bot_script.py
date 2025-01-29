@@ -5,6 +5,7 @@ import openai
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.service import Service
 
 # Charger les variables d'environnement
 TWITTER_USERNAME = os.getenv("TWITTER_USERNAME")
@@ -16,38 +17,37 @@ openai.api_key = OPENAI_API_KEY
 
 # Configurer Selenium
 options = webdriver.ChromeOptions()
-options.add_argument("--headless")
+options.add_argument("--headless")  # Exécution sans interface graphique
 options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
-driver = webdriver.Chrome(executable_path='/usr/local/bin/chromedriver', options=options)
+options.add_argument("--disable-gpu")
 
-# Fonction pour générer un tweet avec hashtags populaires
+# Initialiser le driver avec Service
+driver = webdriver.Chrome(service=Service('/usr/local/bin/chromedriver'), options=options)
+
+# Fonction pour générer un tweet avec hashtags
 def generate_tweet_with_hashtags():
-    # Génération du tweet principal
     tweet_content = openai.ChatCompletion.create(
         model="gpt-4",
         messages=[
-            {"role": "system", "content": "You are a sarcastic, witty, and flirtatious woman who tweets about dating and relationships."},
-            {"role": "user", "content": "Generate a short, sarcastic tweet about relationships, with a confident and seductive tone."}
+            {"role": "system", "content": "You are a witty and sarcastic woman who tweets about relationships."},
+            {"role": "user", "content": "Generate a short sarcastic tweet with a seductive tone."}
         ],
         max_tokens=100
     )['choices'][0]['message']['content'].strip()
 
-    # Génération des hashtags populaires
     hashtags = openai.ChatCompletion.create(
         model="gpt-4",
         messages=[
-            {"role": "system", "content": "You are an expert social media manager. Your task is to generate popular hashtags based on the tweet content."},
-            {"role": "user", "content": f"Generate 3 to 5 popular and relevant hashtags for the tweet: '{tweet_content}'"}
+            {"role": "system", "content": "Generate relevant hashtags for the following tweet."},
+            {"role": "user", "content": tweet_content}
         ],
         max_tokens=30
     )['choices'][0]['message']['content'].strip()
 
-    # Ajouter les hashtags au tweet
-    full_tweet = f"{tweet_content}\n\n{hashtags}"
-    return full_tweet
+    return f"{tweet_content}\n\n{hashtags}"
 
-# Se connecter à Twitter
+# Fonction de connexion à Twitter
 def login_to_twitter():
     driver.get("https://twitter.com/login")
     time.sleep(5)
@@ -62,7 +62,7 @@ def login_to_twitter():
     password_field.send_keys(Keys.RETURN)
     time.sleep(5)
 
-# Publier un tweet
+# Fonction pour publier un tweet
 def post_tweet():
     tweet_content = generate_tweet_with_hashtags()
     driver.get("https://twitter.com/home")
@@ -80,7 +80,7 @@ def post_tweet():
     except Exception as e:
         print(f"Error posting tweet: {e}")
 
-# Répondre à toutes les mentions
+# Fonction pour répondre à toutes les mentions
 def reply_to_all_mentions():
     driver.get("https://twitter.com/notifications/mentions")
     time.sleep(5)
