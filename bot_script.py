@@ -13,8 +13,14 @@ TWITTER_PASSWORD = os.getenv("TWITTER_PASSWORD")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 # Vérification des variables d'environnement
-if not TWITTER_USERNAME or not TWITTER_PASSWORD or not OPENAI_API_KEY:
-    print("Error: Missing environment variables.")
+if not TWITTER_USERNAME:
+    print("Error: Missing TWITTER_USERNAME environment variable.")
+    exit(1)
+if not TWITTER_PASSWORD:
+    print("Error: Missing TWITTER_PASSWORD environment variable.")
+    exit(1)
+if not OPENAI_API_KEY:
+    print("Error: Missing OPENAI_API_KEY environment variable.")
     exit(1)
 
 # Configurer l'API OpenAI
