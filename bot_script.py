@@ -15,15 +15,19 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 # Configurer l'API OpenAI
 openai.api_key = OPENAI_API_KEY
 
+# Configurer les chemins pour Heroku
+CHROMEDRIVER_PATH = os.getenv('CHROMEDRIVER_PATH', '/app/.chromedriver/bin/chromedriver')
+GOOGLE_CHROME_BIN = os.getenv('GOOGLE_CHROME_SHIM', '/app/.apt/usr/bin/google-chrome')
+
 # Configurer Selenium
 options = webdriver.ChromeOptions()
-options.add_argument("--headless")  # Exécution sans interface graphique
+options.binary_location = GOOGLE_CHROME_BIN
+options.add_argument("--headless")
 options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
-options.add_argument("--disable-gpu")
 
-# Initialiser le driver avec Service
-driver = webdriver.Chrome(service=Service('/usr/local/bin/chromedriver'), options=options)
+# Initialiser le driver Selenium
+driver = webdriver.Chrome(service=Service(CHROMEDRIVER_PATH), options=options)
 
 # Fonction pour générer un tweet avec hashtags
 def generate_tweet_with_hashtags():
