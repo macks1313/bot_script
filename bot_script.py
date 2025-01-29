@@ -16,34 +16,38 @@ openai.api_key = OPENAI_API_KEY
 
 # Configurer Selenium
 options = webdriver.ChromeOptions()
-options.add_argument("--headless")  # Exécution sans interface graphique
+options.add_argument("--headless")
 options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
 options.add_argument("--disable-gpu")
 options.add_argument("--remote-debugging-port=9222")
 
-# Initialiser le driver sans chemins explicites
+# Initialiser le driver
 driver = webdriver.Chrome(options=options)
 
 # Fonction pour générer un tweet avec hashtags
 def generate_tweet_with_hashtags():
-    tweet_content = openai.ChatCompletion.create(
+    # Génération du tweet principal
+    response = openai.ChatCompletion.create(
         model="gpt-4",
         messages=[
             {"role": "system", "content": "You are a witty and sarcastic woman who tweets about relationships."},
             {"role": "user", "content": "Generate a short sarcastic tweet with a seductive tone."}
         ],
         max_tokens=100
-    )['choices'][0]['message']['content'].strip()
+    )
+    tweet_content = response.choices[0].message["content"].strip()
 
-    hashtags = openai.ChatCompletion.create(
+    # Génération des hashtags
+    response = openai.ChatCompletion.create(
         model="gpt-4",
         messages=[
             {"role": "system", "content": "Generate relevant hashtags for the following tweet."},
             {"role": "user", "content": tweet_content}
         ],
         max_tokens=30
-    )['choices'][0]['message']['content'].strip()
+    )
+    hashtags = response.choices[0].message["content"].strip()
 
     return f"{tweet_content}\n\n{hashtags}"
 
@@ -119,4 +123,3 @@ try:
     run_bot()
 finally:
     driver.quit()
-
