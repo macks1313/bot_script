@@ -64,3 +64,8 @@ def test_twitter_login_and_tweet():
 
 # Exécuter le test
 test_twitter_login_and_tweet()
+
+# Garder le processus actif
+print("Entering idle loop to keep the process alive...")
+while True:
+    time.sleep(600)  # Garder la boucle active en attendant 10 minutes à chaque itération
