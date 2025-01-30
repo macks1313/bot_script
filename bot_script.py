@@ -16,7 +16,6 @@ options.add_argument("--disable-dev-shm-usage")
 options.add_argument("--disable-gpu")
 options.add_argument("--remote-debugging-port=9222")
 
-# Initialiser le driver Selenium
 try:
     driver = webdriver.Chrome(options=options)
     print("Selenium driver initialized successfully.")
@@ -42,6 +41,11 @@ def test_twitter_login_and_tweet():
         password_field.send_keys(Keys.RETURN)
         time.sleep(5)
 
+        print("Checking if login was successful...")
+        if "home" not in driver.current_url:
+            print("Login failed. Possibly a captcha or account restriction.")
+            return
+
         print("Login successful! Navigating to home page...")
         driver.get("https://twitter.com/home")
         time.sleep(5)
@@ -51,6 +55,7 @@ def test_twitter_login_and_tweet():
         tweet_box.send_keys("This is a test tweet from Selenium!")
         time.sleep(2)
 
+        print("Clicking the tweet button...")
         tweet_button = driver.find_element(By.XPATH, '//div[@data-testid="tweetButtonInline"]')
         tweet_button.click()
         print("Test tweet posted successfully!")
@@ -68,4 +73,4 @@ test_twitter_login_and_tweet()
 # Garder le processus actif
 print("Entering idle loop to keep the process alive...")
 while True:
-    time.sleep(600)  # Garder la boucle active en attendant 10 minutes à chaque itération
+    time.sleep(600)
