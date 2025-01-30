@@ -83,8 +83,10 @@ def test_simple_tweet():
         time.sleep(5)
 
     except Exception as e:
-        print(f"Error in simple tweet test: {e}")
+        # Log détaillé de l'erreur et capture d'écran
+        print(f"Error in simple tweet test: {str(e)}")
         log_with_screenshot("error_occurred")
+
     finally:
         print("Shutting down Selenium driver...")
         driver.quit()
@@ -97,4 +99,3 @@ test_simple_tweet()
 print("Entering idle loop to keep the process alive...")
 while True:
     time.sleep(600)
-
