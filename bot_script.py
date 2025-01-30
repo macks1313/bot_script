@@ -41,8 +41,15 @@ def test_twitter_login_and_tweet():
         password_field.send_keys(Keys.RETURN)
         time.sleep(5)
 
-        print("Checking if login was successful...")
-        if "home" not in driver.current_url:
+        # Vérification de l'URL après connexion
+        current_url = driver.current_url
+        print(f"Current URL after login attempt: {current_url}")
+
+        # Capture d'écran après la connexion
+        driver.save_screenshot("/tmp/twitter_login_debug.png")
+        print("Screenshot saved: /tmp/twitter_login_debug.png")
+
+        if "home" not in current_url:
             print("Login failed. Possibly a captcha or account restriction.")
             return
 
